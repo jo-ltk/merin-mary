@@ -11,6 +11,7 @@ export default defineConfig([
       "dist/**",
       "node_modules/**",
       ".next/**",
+      ".vite/**",
       "out/**",
       "build/**",
       "app/**",

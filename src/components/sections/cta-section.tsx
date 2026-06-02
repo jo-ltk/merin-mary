@@ -58,16 +58,18 @@ export function CTASection() {
           {...fadeUp(0.1)}
           className="mt-8 text-4xl font-medium tracking-[-1px] md:text-6xl"
         >
-          Start Your{" "}
-          <span className="font-serif italic font-normal">Journey</span>
+          Thanks,{" "}
+          <span className="font-serif italic font-normal">Merin.</span>
         </motion.h2>
 
         <motion.p
           {...fadeUp(0.2)}
           className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
         >
-          Subscribe for depth-first ideas. Write to build a body of work that
-          compounds.
+          Maybe some stories don&apos;t need a perfect ending. Maybe they only
+          need gratitude. Thanks for the adventures. Thanks for the laughs.
+          Thanks for being part of my life story. Still one of my favorite
+          humans.
         </motion.p>
 
         <motion.div
@@ -77,13 +79,13 @@ export function CTASection() {
           )}
         >
           <Button className="rounded-lg px-8 py-3.5 text-sm font-semibold">
-            Subscribe Now
+            Start Journey
           </Button>
           <Button
             variant="liquid"
             className="rounded-lg px-8 py-3.5 text-sm font-semibold ring-1 ring-white/5"
           >
-            Start Writing
+            Continue Exploring
           </Button>
         </motion.div>
       </div>

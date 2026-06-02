@@ -38,14 +38,14 @@ export function HeroSection() {
               <img
                 key={src}
                 src={src}
-                alt=""
+                alt="Archived travel memory"
                 className="h-8 w-8 rounded-full border-2 border-background object-cover"
                 loading="lazy"
               />
             ))}
           </div>
           <span className="text-sm text-muted-foreground">
-            7,000+ people already subscribed
+            Travel Mode · Memory Saved · Archived
           </span>
         </motion.div>
 
@@ -53,16 +53,16 @@ export function HeroSection() {
           {...fadeUp(0.1)}
           className="text-5xl font-medium tracking-[-2px] md:text-7xl lg:text-8xl"
         >
-          Get <span className="font-serif italic font-normal">Inspired</span>{" "}
-          with Us
+          PROJECT:{" "}
+          <span className="font-serif italic font-normal">MERIN</span> MARY
         </motion.h1>
 
         <motion.p
           {...fadeUp(0.2)}
           className="mt-6 max-w-3xl text-lg leading-relaxed text-[hsl(var(--hero-subtitle))]"
         >
-          Join our feed for meaningful updates, news around technology and a
-          shared journey toward depth and direction.
+          An interactive archive of adventures, travel stories, random chaos,
+          missed moments, and one unforgettable human.
         </motion.p>
 
         <motion.form
@@ -72,12 +72,12 @@ export function HeroSection() {
         >
           <Input
             type="email"
-            placeholder="Enter your email"
+            placeholder="reply loading..."
             className="h-12 flex-1 rounded-full"
           />
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
             <Button className="h-12 rounded-full px-8 py-3 font-semibold tracking-[1px]">
-              SUBSCRIBE
+              OPEN ARCHIVE
             </Button>
           </motion.div>
         </motion.form>

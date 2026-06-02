@@ -7,24 +7,24 @@ const SOLUTION_VIDEO =
 
 const features = [
   {
-    title: "Curated Feed",
+    title: "v1.0 — Bumble Match Created",
     description:
-      "A signal-first timeline that rewards clarity, not volume or outrage.",
+      "[Soft Launch] The swipe that started it all. v1.5 — Daily Calls Activated soon after.",
   },
   {
-    title: "Writer Tools",
+    title: "v2.0 — Travel Mode Unlocked",
     description:
-      "Draft, refine, and publish with workflows that keep you shipping.",
+      "[Memory Saved] Trips, hostels, curfew drama. v2.5 — Scooter Trust System Enabled.",
   },
   {
-    title: "Community",
+    title: "v3.0 — Communication Issues Detected",
     description:
-      "Turn readers into participants through threads, replies, and shared context.",
+      "[Archived] Missed cues, quieter days. Not dramatic — just honest patch notes.",
   },
   {
-    title: "Distribution",
+    title: "v3.5 — Birthday Update Failed",
     description:
-      "Reach the right people through search, shares, and compounding archives.",
+      "[Rare Screenshot] August 4th. No excuses. v4.0 — Archive Mode Enabled. core memory unlocked.",
   },
 ] as const;
 
@@ -33,16 +33,15 @@ export function SolutionSection() {
     <section className="border-t border-border/30 py-32 md:py-44">
       <div className="mx-auto max-w-6xl px-8 md:px-28">
         <motion.div {...fadeUp(0)} className="text-xs tracking-[3px] uppercase text-muted-foreground">
-          SOLUTION
+          PATCH NOTES
         </motion.div>
 
         <motion.h2
           {...fadeUp(0.1)}
           className="mt-6 text-4xl font-medium tracking-[-1px] md:text-6xl"
         >
-          The platform for{" "}
-          <span className="font-serif italic font-normal">meaningful</span>{" "}
-          content
+          Funny{" "}
+          <span className="font-serif italic font-normal">Moments</span>
         </motion.h2>
 
         <motion.div {...fadeUp(0.15)} className="mt-12">

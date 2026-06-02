@@ -1,6 +1,6 @@
 # merin-mary
 
-Mindloop — a dark monochrome newsletter landing page built with React, Vite, TypeScript, Tailwind CSS, shadcn/ui, and Framer Motion.
+PROJECT: MERIN MARY — a mobile-first interactive scrapbook built with React, Vite, TypeScript, Tailwind CSS, shadcn/ui, and Framer Motion.
 
 ## Getting started
 

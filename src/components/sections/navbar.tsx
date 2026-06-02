@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { MindloopLogo } from "@/components/sections/logo";
 import { cn } from "@/lib/utils";
 
-const navLinks = ["Home", "How It Works", "Philosophy", "Use Cases"] as const;
+const navLinks = ["Archive", "Travel", "Moments", "Thanks"] as const;
 
 function Dot() {
   return <span className="text-muted-foreground/70">•</span>;
@@ -40,7 +40,7 @@ export function Navbar() {
       <nav className="flex items-center justify-between">
         <a href="#" className="flex items-center gap-3">
           <MindloopLogo />
-          <span className="text-base font-bold tracking-tight">Mindloop</span>
+          <span className="text-base font-bold tracking-tight">Merin Mary</span>
         </a>
 
         <div className="hidden items-center gap-3 md:flex">

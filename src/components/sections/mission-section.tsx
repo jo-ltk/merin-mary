@@ -94,13 +94,14 @@ export function MissionSection() {
 
       <div className="mx-auto mt-16 max-w-5xl">
         <ScrollRevealWords
-          text={`We're building a space where curiosity meets clarity — where readers find depth, writers find reach, and every newsletter becomes a conversation worth having.`}
-          highlightWords={["curiosity", "meets", "clarity"]}
+          text={`Travel Stories unlocked — new places, funny trip moments, noodles and a quick balance check afterwards, scooter trust unlocked, and nammal full comedy ayirunnu. Street Food Explorer mode. Professional Overthinker, still down for chaos. Some memories age well.`}
+          highlightWords={["travelled", "together", "memories"]}
           className="text-2xl font-medium tracking-[-1px] md:text-4xl lg:text-5xl"
         />
 
         <ScrollRevealWords
-          text={`A platform where content, community, and insight flow together — with less noise, less friction, and more meaning for everyone involved.`}
+          text={`Some mistakes stay with you. August 4th is one of mine. No excuses. Just something I wish I had done better. Communication had its glitches — distance grew — but appreciation stays. Things I learned: show up, remember the small dates, and never take the daily calls for granted.`}
+          highlightWords={["August", "4th", "appreciation"]}
           className="mt-10 text-xl font-medium md:text-2xl lg:text-3xl"
         />
       </div>
