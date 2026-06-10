@@ -34,8 +34,34 @@ export function JourneyLine({
 }: {
   containerRef: React.RefObject<HTMLDivElement | null>;
 }) {
+  const svgRef = React.useRef<SVGSVGElement | null>(null);
   const pathRef = React.useRef<SVGPathElement | null>(null);
   const heartRef = React.useRef<SVGGElement | null>(null);
+  const lastPoint = React.useRef({ x: 500, y: 10 });
+
+  // `preserveAspectRatio="none"` stretches the viewBox to the container, which
+  // distorts circles into ellipses. This inverse scale keeps them perfectly
+  // round at a fixed pixel size regardless of screen aspect ratio.
+  const [circleScale, setCircleScale] = React.useState({ sx: 1, sy: 1 });
+  const circleScaleRef = React.useRef(circleScale);
+
+  React.useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      if (!width || !height) return;
+      const next = { sx: 1000 / width, sy: 4000 / height };
+      circleScaleRef.current = next;
+      setCircleScale(next);
+      heartRef.current?.setAttribute(
+        "transform",
+        `translate(${lastPoint.current.x}, ${lastPoint.current.y}) scale(${next.sx}, ${next.sy})`
+      );
+    });
+    observer.observe(svg);
+    return () => observer.disconnect();
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -54,12 +80,18 @@ export function JourneyLine({
     if (!path || !heart) return;
     const length = path.getTotalLength();
     const point = path.getPointAtLength(Math.max(0, Math.min(1, v)) * length);
-    heart.setAttribute("transform", `translate(${point.x}, ${point.y})`);
+    lastPoint.current = { x: point.x, y: point.y };
+    const { sx, sy } = circleScaleRef.current;
+    heart.setAttribute(
+      "transform",
+      `translate(${point.x}, ${point.y}) scale(${sx}, ${sy})`
+    );
     heart.setAttribute("opacity", v > 0.005 && v < 0.995 ? "1" : "0");
   });
 
   return (
     <svg
+      ref={svgRef}
       className="pointer-events-none absolute inset-0 h-full w-full"
       viewBox="0 0 1000 4000"
       preserveAspectRatio="none"
@@ -110,17 +142,19 @@ export function JourneyLine({
 
       {/* Sparkles resting on the bends */}
       {SPARKLES.map((s, i) => (
-        <motion.circle
+        <g
           key={`${s.x}-${s.y}`}
-          cx={s.x}
-          cy={s.y}
-          r="2.5"
-          fill="hsl(var(--blush) / 0.9)"
-          initial={{ opacity: 0, scale: 0 }}
-          whileInView={{ opacity: [0, 1, 0.5, 1], scale: 1 }}
-          viewport={{ once: true, margin: "-20%" }}
-          transition={{ duration: 1.4, delay: 0.2 + i * 0.1 }}
-        />
+          transform={`translate(${s.x}, ${s.y}) scale(${circleScale.sx}, ${circleScale.sy})`}
+        >
+          <motion.circle
+            r="3"
+            fill="hsl(var(--blush) / 0.9)"
+            initial={{ opacity: 0, scale: 0 }}
+            whileInView={{ opacity: [0, 1, 0.5, 1], scale: 1 }}
+            viewport={{ once: true, margin: "-20%" }}
+            transition={{ duration: 1.4, delay: 0.2 + i * 0.1 }}
+          />
+        </g>
       ))}
 
       {/* Glowing heart travelling along the line */}
