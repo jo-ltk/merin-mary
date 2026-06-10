@@ -1,9 +1,12 @@
 import Hls from "hls.js";
 import { motion } from "framer-motion";
+import { Heart } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { fadeUp, useIsMobile } from "@/lib/motion";
+
+const THANKS_PHOTO = "/images/thanks-showcase.png";
 
 const CTA_HLS =
   "https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8";
@@ -66,6 +69,42 @@ export function CTASection() {
             Merin.
           </span>
         </motion.h2>
+
+        <motion.div
+          {...fadeUp(0.15, isMobile)}
+          className="relative mx-auto mt-14 max-w-xs md:mt-16 md:max-w-sm"
+        >
+          <div className="blush-glow absolute inset-0 scale-125" aria-hidden />
+          <motion.div
+            className="relative -rotate-2"
+            animate={{ y: [0, -10, 0] }}
+            transition={{
+              duration: 5.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <div className="photo-frame relative aspect-[4/5] bg-background/40 p-3 pb-10 shadow-2xl ring-1 ring-white/10">
+              <img
+                src={THANKS_PHOTO}
+                alt="A favorite memory with Merin"
+                loading="lazy"
+                className="rounded-sm"
+              />
+              <p className="absolute inset-x-0 bottom-3 text-center font-script text-lg text-blush/90 md:text-xl">
+                saved forever ♡
+              </p>
+            </div>
+            <Heart
+              className="absolute -right-3 -top-3 h-5 w-5 fill-blush text-blush drop-shadow-md"
+              aria-hidden
+            />
+            <Heart
+              className="absolute -bottom-2 -left-4 h-4 w-4 fill-blush/70 text-blush/70 drop-shadow-md"
+              aria-hidden
+            />
+          </motion.div>
+        </motion.div>
 
         <motion.p
           {...fadeUp(0.2, isMobile)}

@@ -135,11 +135,11 @@ export function MissionSection() {
       </motion.div>
 
       <div className="mx-auto mt-24 max-w-4xl md:mt-32">
-        <ScrollRevealWords
-          text={`Travel Stories unlocked — new places, funny trip moments, noodles and a quick balance check afterwards, scooter trust unlocked, and nammal full comedy ayirunnu. Street Food Explorer mode. Professional Overthinker, still down for chaos. Some memories age well.`}
-          highlightWords={["unlocked", "comedy", "memories"]}
-          className="font-display text-3xl font-medium leading-snug tracking-tight md:text-5xl"
-        />
+      <ScrollRevealWords
+  text={`Travel Stories unlocked — puthiya places, random trips, noodles, kure photos, scooter trust unlocked, nammal full comedy ayirunnu. Street Food Explorer mode. Overthinking okke und, pakse karangan vilichal njan ready. Chila memories vere vibe aanu.`}
+  highlightWords={["unlocked", "comedy", "memories"]}
+  className="font-display text-3xl font-medium leading-snug tracking-tight md:text-5xl"
+/>
 
         <ScrollRevealWords
           text={`Some mistakes stay with you. August 4th is one of mine. No excuses. Just something I wish I had done better. Communication had its glitches — distance grew — but appreciation stays. Things I learned: show up, remember the small dates, and never take the daily calls for granted.`}

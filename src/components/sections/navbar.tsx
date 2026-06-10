@@ -24,11 +24,11 @@ export function Navbar() {
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/80 to-transparent" />
       <nav className="relative flex items-center justify-between">
-        <a href="#" className="flex items-baseline gap-2">
-          <span className="font-display text-xl font-medium tracking-tight">
+        <a href="#" className="flex shrink-0 items-baseline gap-2">
+          <span className="font-display text-lg font-medium tracking-tight sm:text-xl">
             Merin Mary
           </span>
-          <span className="hidden font-script text-base text-blush/80 sm:inline">
+          <span className="font-script text-sm text-blush/80 sm:text-base">
             the archive
           </span>
         </a>

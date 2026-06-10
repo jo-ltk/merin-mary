@@ -8,24 +8,24 @@ const platforms = [
     name: "Travel Enthusiast",
     description:
       "[Travel Mode] She loves exploring new places. Travel first. Plan later. — travel mode activated",
-    img: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=640&h=800&q=80",
-    alt: "Mountain road — Favorite Moment",
+    img: "/images/travel-enthusiast.png",
+    alt: "Travel Enthusiast — travel mode activated",
     rotate: -2,
   },
   {
     name: "Independent Soul",
     description:
       "[Core Memory] Very independent. Prefers freedom. Freedom always looked good on her.",
-    img: "https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=640&h=800&q=80",
-    alt: "Open horizon — Main character energy",
+    img: "/images/independent-soul.png",
+    alt: "Independent Soul — freedom always looked good on her",
     rotate: 1.5,
   },
   {
     name: "Curfew Survivor",
     description:
       "[Chaos Detected] Hostel curfew at 9:30 PM? Never her vibe. Spontaneous adventures only.",
-    img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=640&h=800&q=80",
-    alt: "Night city lights — Rare Screenshot",
+    img: "/images/curfew-survivor.png",
+    alt: "Curfew Survivor — spontaneous adventures",
     rotate: -1,
   },
 ] as const;

@@ -17,7 +17,7 @@ import { titleReveal, useIsMobile } from "@/lib/motion";
  */
 const PHOTOS = [
   {
-    src: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=640&q=80",
+    src: "/images/hero-1.png",
     className: "left-[3%] top-[14%] w-40 lg:left-[6%] lg:w-52",
     rotate: -7,
     depth: 34,
@@ -25,7 +25,7 @@ const PHOTOS = [
     float: 6.2,
   },
   {
-    src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=640&q=80",
+    src: "/images/hero-2.png",
     className: "right-[2%] top-[12%] w-44 lg:right-[5%] lg:w-60",
     rotate: 6,
     depth: 26,
@@ -33,7 +33,7 @@ const PHOTOS = [
     float: 7.4,
   },
   {
-    src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=640&q=80",
+    src: "/images/hero-3.png",
     className: "bottom-[16%] left-[8%] w-48 lg:left-[12%] lg:w-64",
     rotate: 5,
     depth: 20,
@@ -41,28 +41,12 @@ const PHOTOS = [
     float: 8.1,
   },
   {
-    src: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=640&q=80",
+    src: "/images/hero-4.png",
     className: "bottom-[14%] right-[7%] w-44 lg:right-[11%] lg:w-56",
     rotate: -5,
     depth: 30,
     delay: 1.1,
     float: 6.8,
-  },
-  {
-    src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=640&q=80",
-    className: "left-[26%] top-[6%] hidden w-36 lg:block",
-    rotate: -3,
-    depth: 16,
-    delay: 1.25,
-    float: 9,
-  },
-  {
-    src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=640&q=80",
-    className: "right-[24%] top-[64%] hidden w-36 lg:block",
-    rotate: 8,
-    depth: 22,
-    delay: 1.4,
-    float: 7,
   },
 ] as const;
 
