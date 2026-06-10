@@ -1,7 +1,6 @@
 import { Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
-import { HeartRain, useHeartRain } from "@/components/effects/heart-rain";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -16,8 +15,6 @@ function Dot() {
 }
 
 export function Navbar() {
-  const { hearts, burst, remove } = useHeartRain();
-
   return (
     <motion.header
       initial={{ opacity: 0, y: -16 }}
@@ -27,7 +24,7 @@ export function Navbar() {
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/80 to-transparent" />
       <nav className="relative flex items-center justify-between">
-        <a href="#" onClick={burst} className="flex items-baseline gap-2">
+        <a href="#" className="flex items-baseline gap-2">
           <span className="font-display text-xl font-medium tracking-tight">
             Merin Mary
           </span>
@@ -41,7 +38,6 @@ export function Navbar() {
             <div key={link.label} className="flex items-center gap-4">
               <a
                 href={link.href}
-                onClick={burst}
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 {link.label}
@@ -53,7 +49,6 @@ export function Navbar() {
 
         <motion.button
           type="button"
-          onClick={burst}
           aria-label="Shower the page with love"
           className={cn(
             "liquid-glass grid h-10 w-10 cursor-pointer place-items-center rounded-full",
@@ -65,8 +60,6 @@ export function Navbar() {
           <Heart className="h-4 w-4 text-blush" />
         </motion.button>
       </nav>
-
-      <HeartRain hearts={hearts} onHeartDone={remove} />
     </motion.header>
   );
 }

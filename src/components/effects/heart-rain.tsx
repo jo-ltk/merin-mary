@@ -47,6 +47,25 @@ export function useHeartRain() {
   return { hearts, burst, remove };
 }
 
+/**
+ * Mounts once at app level: rains hearts whenever any button or link
+ * anywhere on the page is clicked.
+ */
+export function GlobalHeartRain() {
+  const { hearts, burst, remove } = useHeartRain();
+
+  React.useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("button, a")) burst();
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [burst]);
+
+  return <HeartRain hearts={hearts} onHeartDone={remove} />;
+}
+
 export function HeartRain({
   hearts,
   onHeartDone,

@@ -1,6 +1,7 @@
 import { MotionConfig } from "framer-motion";
 import * as React from "react";
 
+import { GlobalHeartRain } from "@/components/effects/heart-rain";
 import { JourneyLine } from "@/components/journey/journey-line";
 import { CTASection } from "@/components/sections/cta-section";
 import { Footer } from "@/components/sections/footer";
@@ -17,6 +18,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
     <div className="min-h-dvh bg-background text-foreground">
       <div className="grain-overlay" aria-hidden />
+      <GlobalHeartRain />
       <Navbar />
       <main>
         <HeroSection />
