@@ -9,6 +9,7 @@ import {
 import { Heart } from "lucide-react";
 import * as React from "react";
 
+import { MemoryCard, MemoryLightbox } from "@/components/memory/memory-card";
 import { titleReveal, useIsMobile } from "@/lib/motion";
 
 /**
@@ -18,6 +19,7 @@ import { titleReveal, useIsMobile } from "@/lib/motion";
 const PHOTOS = [
   {
     src: "/images/hero-1.png",
+    caption: "the smile that stayed",
     className: "left-[3%] top-[14%] w-40 lg:left-[6%] lg:w-52",
     rotate: -7,
     depth: 34,
@@ -26,6 +28,7 @@ const PHOTOS = [
   },
   {
     src: "/images/hero-2.png",
+    caption: "a chapter I still reread",
     className: "right-[2%] top-[12%] w-44 lg:right-[5%] lg:w-60",
     rotate: 6,
     depth: 26,
@@ -34,6 +37,7 @@ const PHOTOS = [
   },
   {
     src: "/images/hero-3.png",
+    caption: "the memories are still here",
     className: "bottom-[16%] left-[8%] w-48 lg:left-[12%] lg:w-64",
     rotate: 5,
     depth: 20,
@@ -42,6 +46,7 @@ const PHOTOS = [
   },
   {
     src: "/images/hero-4.png",
+    caption: "hoping for one more conversation",
     className: "bottom-[14%] right-[7%] w-44 lg:right-[11%] lg:w-56",
     rotate: -5,
     depth: 30,
@@ -57,11 +62,15 @@ function FloatingPhoto({
   mouseX,
   mouseY,
   scrollProgress,
+  flipped,
+  onTap,
 }: {
   photo: Photo;
   mouseX: MotionValue<number>;
   mouseY: MotionValue<number>;
   scrollProgress: MotionValue<number>;
+  flipped: boolean;
+  onTap: () => void;
 }) {
   const px = useTransform(mouseX, (v) => v * photo.depth);
   const py = useTransform(mouseY, (v) => v * photo.depth);
@@ -84,7 +93,6 @@ function FloatingPhoto({
           }}
         >
           <motion.div
-            className="photo-frame aspect-[4/5]"
             animate={{ y: [0, -9, 0] }}
             transition={{
               duration: photo.float,
@@ -94,8 +102,12 @@ function FloatingPhoto({
             }}
             whileHover={{ scale: 1.04, transition: { duration: 0.4 } }}
           >
-            <img src={photo.src} alt="" loading="eager" draggable={false} />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/35 via-transparent to-transparent" />
+            <MemoryCard
+              src={photo.src}
+              flipped={flipped}
+              onTap={onTap}
+              className="aspect-[4/5] w-full"
+            />
           </motion.div>
         </motion.div>
       </motion.div>
@@ -118,6 +130,18 @@ export function HeroSection() {
   const titleY = useTransform(scrollYProgress, [0, 1], [0, 110]);
   const titleFade = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
+  // Tapping any card flips it open and shows the photo full screen, centered
+  const [activeCard, setActiveCard] = React.useState<number | null>(null);
+  const [hasExplored, setHasExplored] = React.useState(false);
+  // Keeps the most recently opened card on top while it settles back into the fan
+  const lastActiveCard = React.useRef<number | null>(null);
+
+  const openCard = (i: number) => {
+    lastActiveCard.current = i;
+    setHasExplored(true);
+    setActiveCard((cur) => (cur === i ? null : i));
+  };
+
   const onMouseMove = (e: React.MouseEvent) => {
     rawX.set(e.clientX / window.innerWidth - 0.5);
     rawY.set(e.clientY / window.innerHeight - 0.5);
@@ -136,13 +160,15 @@ export function HeroSection() {
 
       {/* Floating photo collage — desktop & tablet */}
       <div className="absolute inset-0 hidden md:block">
-        {PHOTOS.map((photo) => (
+        {PHOTOS.map((photo, i) => (
           <FloatingPhoto
             key={photo.src}
             photo={photo}
             mouseX={mouseX}
             mouseY={mouseY}
             scrollProgress={scrollYProgress}
+            flipped={activeCard === i}
+            onTap={() => openCard(i)}
           />
         ))}
       </div>
@@ -176,24 +202,66 @@ export function HeroSection() {
           <span className="h-px w-8 bg-border md:w-12" />
         </motion.div>
 
-        {/* Mobile collage — an overlapping fan of photos */}
+        {/* Mobile collage — a fan of tappable memory cards */}
         <motion.div
           {...titleReveal(0.8, isMobile)}
-          className="mt-12 flex items-center justify-center md:hidden"
+          className="mt-12 flex flex-col items-center md:hidden"
         >
-          {PHOTOS.slice(0, 4).map((photo, i) => (
-            <div
-              key={photo.src}
-              className="photo-frame -ml-8 aspect-[4/5] w-28 first:ml-0"
-              style={{
-                transform: `rotate(${(i - 1.5) * 6}deg) translateY(${Math.abs(i - 1.5) * 8}px)`,
-              }}
-            >
-              <img src={photo.src} alt="" loading="eager" draggable={false} />
-            </div>
-          ))}
+          <div className="flex items-center justify-center">
+            {PHOTOS.slice(0, 4).map((photo, i) => {
+              const isActive = activeCard === i;
+
+              return (
+                <motion.div
+                  key={photo.src}
+                  className="-ml-8 first:ml-0"
+                  style={{
+                    zIndex: isActive ? 40 : lastActiveCard.current === i ? 30 : i,
+                  }}
+                  animate={{
+                    rotate: isActive ? 0 : (i - 1.5) * 6,
+                    y: isActive ? -10 : Math.abs(i - 1.5) * 8,
+                    scale: isActive ? 1.08 : 1,
+                  }}
+                  transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                >
+                  <MemoryCard
+                    src={photo.src}
+                    flipped={isActive}
+                    onTap={() => openCard(i)}
+                    className="aspect-[4/5] w-28"
+                  />
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Invitation to explore — retires after the first discovery */}
+          <motion.span
+            aria-hidden
+            className="mt-7 font-script text-xl text-blush/80"
+            animate={
+              hasExplored
+                ? { opacity: 0 }
+                : { opacity: [0.45, 1, 0.45] }
+            }
+            transition={
+              hasExplored
+                ? { duration: 0.5 }
+                : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
+            }
+          >
+            tap a card to reveal a memory
+          </motion.span>
         </motion.div>
       </motion.div>
+
+      {/* Fullscreen photo reveal */}
+      <MemoryLightbox
+        src={activeCard !== null ? PHOTOS[activeCard].src : null}
+        caption={activeCard !== null ? PHOTOS[activeCard].caption : null}
+        onClose={() => setActiveCard(null)}
+      />
 
       {/* Scroll cue — CSS animations avoid extra JS-driven frames on mobile */}
       <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 animate-fade-in flex-col items-center gap-3 [animation-delay:2s]">

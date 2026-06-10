@@ -76,7 +76,7 @@ export function HeartRain({
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 z-[90] overflow-hidden"
+      className="pointer-events-none fixed inset-0 z-[80] overflow-hidden"
     >
       <AnimatePresence>
         {hearts.map((heart) => (
