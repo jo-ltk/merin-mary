@@ -1,8 +1,8 @@
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import * as React from "react";
 
 import { ChapterHeading } from "@/components/sections/chapter-heading";
-import { fadeUp } from "@/lib/motion";
+import { fadeUp, useIsMobile } from "@/lib/motion";
 
 const SOLUTION_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260325_125119_8e5ae31c-0021-4396-bc08-f7aebeb877a2.mp4";
@@ -35,14 +35,11 @@ const moments = [
 ] as const;
 
 export function SolutionSection() {
+  const isMobile = useIsMobile();
   const railRef = React.useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: railRef,
     offset: ["start 0.8", "end 0.6"],
-  });
-  const railProgress = useSpring(scrollYProgress, {
-    stiffness: 60,
-    damping: 20,
   });
 
   return (
@@ -65,7 +62,7 @@ export function SolutionSection() {
           lede="Patch notes from a story still worth re-reading."
         />
 
-        <motion.div {...fadeUp(0.15)} className="mt-16">
+        <motion.div {...fadeUp(0.15, isMobile)} className="mt-16">
           <div className="photo-frame rotate-[0.5deg]">
             <video
               className="aspect-[3/1] w-full object-cover"
@@ -84,7 +81,7 @@ export function SolutionSection() {
           <div className="absolute inset-y-0 left-[7px] w-px bg-border/30 md:left-1/2" />
           <motion.div
             className="absolute left-[7px] top-0 w-px origin-top bg-gradient-to-b from-blush via-foreground/60 to-blush md:left-1/2"
-            style={{ scaleY: railProgress, height: "100%" }}
+            style={{ scaleY: scrollYProgress, height: "100%" }}
           />
 
           <div className="space-y-20 md:space-y-28">
@@ -93,7 +90,7 @@ export function SolutionSection() {
               return (
                 <motion.div
                   key={m.version}
-                  {...fadeUp(0.1)}
+                  {...fadeUp(0.1, isMobile)}
                   className="relative grid items-center gap-6 pl-10 md:grid-cols-2 md:gap-0 md:pl-0"
                 >
                   {/* Node on the rail */}

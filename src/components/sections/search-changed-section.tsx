@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 import { ChapterHeading } from "@/components/sections/chapter-heading";
-import { fadeUp } from "@/lib/motion";
+import { fadeUp, useIsMobile } from "@/lib/motion";
 
 const platforms = [
   {
@@ -31,6 +31,8 @@ const platforms = [
 ] as const;
 
 export function SearchChangedSection() {
+  const isMobile = useIsMobile();
+
   return (
     <section
       id="story"
@@ -50,12 +52,12 @@ export function SearchChangedSection() {
         {platforms.map((p, idx) => (
           <motion.figure
             key={p.name}
-            {...fadeUp(0.15 + idx * 0.1)}
+            {...fadeUp(0.15 + idx * 0.1, isMobile)}
             className="group"
             style={{ rotate: p.rotate }}
           >
             <div className="photo-frame aspect-[4/5]">
-              <motion.img
+              <img
                 src={p.img}
                 alt={p.alt}
                 loading="lazy"
@@ -76,7 +78,7 @@ export function SearchChangedSection() {
       </div>
 
       <motion.p
-        {...fadeUp(0.5)}
+        {...fadeUp(0.5, isMobile)}
         className="mt-24 text-center font-script text-2xl text-blush/80 md:text-3xl"
       >
         Cubbon and slow Sundays — still one of the funniest people I met.

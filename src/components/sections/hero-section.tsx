@@ -6,7 +6,10 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { Heart } from "lucide-react";
 import * as React from "react";
+
+import { titleReveal, useIsMobile } from "@/lib/motion";
 
 /**
  * Swap these with your own photos: drop files into /public/images
@@ -116,13 +119,8 @@ function FloatingPhoto({
   );
 }
 
-const titleReveal = (delay: number) => ({
-  initial: { opacity: 0, y: 40, filter: "blur(10px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-  transition: { duration: 1.2, delay, ease: [0.16, 1, 0.3, 1] as const },
-});
-
 export function HeroSection() {
+  const isMobile = useIsMobile();
   const sectionRef = React.useRef<HTMLElement | null>(null);
   const rawX = useMotionValue(0);
   const rawY = useMotionValue(0);
@@ -171,14 +169,14 @@ export function HeroSection() {
         className="relative z-10 mx-auto flex min-h-dvh max-w-5xl flex-col items-center justify-center px-6 pt-24 text-center md:pt-28"
       >
         <motion.span
-          {...titleReveal(0.15)}
+          {...titleReveal(0.15, isMobile)}
           className="font-script text-3xl text-blush md:text-4xl"
         >
           a love letter for
         </motion.span>
 
         <motion.h1
-          {...titleReveal(0.35)}
+          {...titleReveal(0.35, isMobile)}
           className="mt-4 font-display text-7xl font-medium leading-[0.95] tracking-tight md:text-8xl lg:text-[9rem]"
         >
           Merin{" "}
@@ -186,7 +184,7 @@ export function HeroSection() {
         </motion.h1>
 
         <motion.div
-          {...titleReveal(0.6)}
+          {...titleReveal(0.6, isMobile)}
           className="mt-8 flex items-center gap-4 text-[0.65rem] font-medium uppercase tracking-[0.35em] text-muted-foreground md:text-xs"
         >
           <span className="h-px w-8 bg-border md:w-12" />
@@ -196,7 +194,7 @@ export function HeroSection() {
 
         {/* Mobile collage — an overlapping fan of photos */}
         <motion.div
-          {...titleReveal(0.8)}
+          {...titleReveal(0.8, isMobile)}
           className="mt-12 flex items-center justify-center md:hidden"
         >
           {PHOTOS.slice(0, 4).map((photo, i) => (
@@ -213,24 +211,15 @@ export function HeroSection() {
         </motion.div>
       </motion.div>
 
-      {/* Scroll cue */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
-      >
-        <span className="text-[0.6rem] uppercase tracking-[0.4em] text-muted-foreground">
-          scroll slowly
-        </span>
-        <div className="relative h-12 w-px overflow-hidden bg-border/40">
-          <motion.div
-            className="absolute h-1/2 w-full bg-blush"
-            animate={{ y: ["-100%", "200%"] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          />
+      {/* Scroll cue — CSS animations avoid extra JS-driven frames on mobile */}
+      <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 animate-fade-in flex-col items-center gap-3 [animation-delay:2s]">
+        <div className="animate-pulse-soft">
+          <Heart className="h-4 w-4 fill-blush text-blush" />
         </div>
-      </motion.div>
+        <div className="relative h-12 w-px overflow-hidden bg-border/40">
+          <div className="absolute h-1/2 w-full animate-scroll-cue bg-blush" />
+        </div>
+      </div>
     </section>
   );
 }

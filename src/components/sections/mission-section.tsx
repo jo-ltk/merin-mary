@@ -1,50 +1,15 @@
 import {
   motion,
+  useMotionValueEvent,
   useScroll,
   useTransform,
-  type MotionValue,
 } from "framer-motion";
 import * as React from "react";
 
-import { fadeUp } from "@/lib/motion";
+import { fadeUp, useIsMobile, wordRevealOpacity } from "@/lib/motion";
 
 const MISSION_VIDEO =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260325_132944_a0d124bb-eaa1-4082-aa30-2310efb42b4b.mp4";
-
-function RevealWord({
-  word,
-  index,
-  total,
-  scrollYProgress,
-  highlightWords,
-}: {
-  word: string;
-  index: number;
-  total: number;
-  scrollYProgress: MotionValue<number>;
-  highlightWords: string[];
-}) {
-  const start = index / total;
-  const end = (index + 1) / total;
-  const opacity = useTransform(scrollYProgress, [start, end], [0.12, 1]);
-  const clean = word.replace(/[—,.;:!?"]/g, "").toLowerCase();
-  const isHighlight = highlightWords
-    .map((w) => w.toLowerCase())
-    .includes(clean);
-
-  return (
-    <motion.span
-      style={{ opacity }}
-      className={
-        isHighlight
-          ? "italic text-blush"
-          : "text-[hsl(var(--hero-subtitle))]"
-      }
-    >
-      {word}{" "}
-    </motion.span>
-  );
-}
 
 function ScrollRevealWords({
   text,
@@ -55,37 +20,75 @@ function ScrollRevealWords({
   className?: string;
   highlightWords?: string[];
 }) {
+  const isMobile = useIsMobile();
   const ref = React.useRef<HTMLParagraphElement | null>(null);
+  const wordEls = React.useRef<(HTMLSpanElement | null)[]>([]);
   const words = React.useMemo(() => text.split(" "), [text]);
+  const highlightSet = React.useMemo(
+    () => new Set(highlightWords.map((w) => w.toLowerCase())),
+    [highlightWords],
+  );
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start 0.9", "end 0.2"],
+    offset: isMobile ? ["start 0.92", "end 0.45"] : ["start 0.9", "end 0.2"],
   });
+
+  const applyWordOpacities = React.useCallback(
+    (progress: number) => {
+      const total = words.length;
+      for (let i = 0; i < total; i++) {
+        const el = wordEls.current[i];
+        if (el) {
+          el.style.opacity = String(wordRevealOpacity(progress, i, total));
+        }
+      }
+    },
+    [words.length],
+  );
+
+  useMotionValueEvent(scrollYProgress, "change", applyWordOpacities);
+
+  React.useLayoutEffect(() => {
+    applyWordOpacities(scrollYProgress.get());
+  }, [applyWordOpacities, scrollYProgress]);
 
   return (
     <p ref={ref} className={className}>
-      {words.map((word, i) => (
-        <RevealWord
-          key={`${word}-${i}`}
-          word={word}
-          index={i}
-          total={words.length}
-          scrollYProgress={scrollYProgress}
-          highlightWords={highlightWords}
-        />
-      ))}
+      {words.map((word, i) => {
+        const clean = word.replace(/[—,.;:!?"]/g, "").toLowerCase();
+        const isHighlight = highlightSet.has(clean);
+        return (
+          <span
+            key={`${word}-${i}`}
+            ref={(el) => {
+              wordEls.current[i] = el;
+            }}
+            style={{ opacity: 0.12 }}
+            className={
+              isHighlight
+                ? "italic text-blush"
+                : "text-[hsl(var(--hero-subtitle))]"
+            }
+          >
+            {word}{" "}
+          </span>
+        );
+      })}
     </p>
   );
 }
 
 export function MissionSection() {
+  const isMobile = useIsMobile();
   const frameRef = React.useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: frameRef,
     offset: ["start end", "end start"],
   });
-  const videoY = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const videoY = useTransform(scrollYProgress, (v) =>
+    isMobile ? 0 : 50 - v * 100,
+  );
 
   return (
     <section
@@ -94,13 +97,13 @@ export function MissionSection() {
     >
       <div className="text-center">
         <motion.span
-          {...fadeUp(0)}
+          {...fadeUp(0, isMobile)}
           className="font-script text-2xl text-blush md:text-3xl"
         >
           chapter two
         </motion.span>
         <motion.h2
-          {...fadeUp(0.1)}
+          {...fadeUp(0.1, isMobile)}
           className="mt-3 font-display text-5xl font-medium tracking-tight md:text-7xl"
         >
           The{" "}
@@ -112,7 +115,7 @@ export function MissionSection() {
 
       <motion.div
         ref={frameRef}
-        {...fadeUp(0.15)}
+        {...fadeUp(0.15, isMobile)}
         className="mt-20 grid place-items-center"
       >
         <motion.div
@@ -126,7 +129,7 @@ export function MissionSection() {
             loop
             muted
             playsInline
-            preload="auto"
+            preload={isMobile ? "metadata" : "auto"}
           />
         </motion.div>
       </motion.div>

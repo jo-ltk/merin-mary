@@ -3,12 +3,13 @@ import { motion } from "framer-motion";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
-import { fadeUp } from "@/lib/motion";
+import { fadeUp, useIsMobile } from "@/lib/motion";
 
 const CTA_HLS =
   "https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8";
 
 export function CTASection() {
+  const isMobile = useIsMobile();
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
 
   React.useEffect(() => {
@@ -50,14 +51,14 @@ export function CTASection() {
 
       <div className="relative z-10 mx-auto max-w-4xl px-6 text-center md:px-12">
         <motion.span
-          {...fadeUp(0)}
+          {...fadeUp(0, isMobile)}
           className="font-script text-3xl text-blush md:text-4xl"
         >
           the last page
         </motion.span>
 
         <motion.h2
-          {...fadeUp(0.1)}
+          {...fadeUp(0.1, isMobile)}
           className="mt-4 font-display text-6xl font-medium tracking-tight md:text-8xl"
         >
           Thanks,{" "}
@@ -67,7 +68,7 @@ export function CTASection() {
         </motion.h2>
 
         <motion.p
-          {...fadeUp(0.2)}
+          {...fadeUp(0.2, isMobile)}
           className="mx-auto mt-8 max-w-2xl font-display text-2xl leading-relaxed text-[hsl(var(--hero-subtitle))] md:text-3xl"
         >
           Maybe some stories don&apos;t need a perfect ending. Maybe they only
@@ -76,13 +77,13 @@ export function CTASection() {
         </motion.p>
 
         <motion.p
-          {...fadeUp(0.3)}
+          {...fadeUp(0.3, isMobile)}
           className="mt-8 font-script text-3xl text-blush md:text-4xl"
         >
           still one of my favorite humans
         </motion.p>
 
-        <motion.div {...fadeUp(0.4)} className="mt-12">
+        <motion.div {...fadeUp(0.4, isMobile)} className="mt-12">
           <Button
             variant="liquid"
             className="rounded-full px-10 py-3.5 text-sm font-medium tracking-[0.15em] ring-1 ring-white/10"

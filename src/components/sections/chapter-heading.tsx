@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
-import { fadeUp } from "@/lib/motion";
+import { fadeUp, useIsMobile } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 export function ChapterHeading({
@@ -15,19 +15,20 @@ export function ChapterHeading({
   lede?: ReactNode;
   align?: "center" | "left";
 }) {
+  const isMobile = useIsMobile();
   const centered = align === "center";
 
   return (
     <div className={cn(centered ? "text-center" : "text-left")}>
       <motion.span
-        {...fadeUp(0)}
+        {...fadeUp(0, isMobile)}
         className="font-script text-2xl text-blush md:text-3xl"
       >
         {eyebrow}
       </motion.span>
 
       <motion.h2
-        {...fadeUp(0.1)}
+        {...fadeUp(0.1, isMobile)}
         className="mt-3 font-display text-5xl font-medium tracking-tight md:text-7xl"
       >
         {title}
@@ -35,7 +36,7 @@ export function ChapterHeading({
 
       {lede ? (
         <motion.p
-          {...fadeUp(0.2)}
+          {...fadeUp(0.2, isMobile)}
           className={cn(
             "mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground",
             centered && "mx-auto",

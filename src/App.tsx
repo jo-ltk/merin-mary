@@ -1,3 +1,4 @@
+import { MotionConfig } from "framer-motion";
 import * as React from "react";
 
 import { JourneyLine } from "@/components/journey/journey-line";
@@ -13,6 +14,7 @@ export default function App() {
   const journeyRef = React.useRef<HTMLDivElement | null>(null);
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-dvh bg-background text-foreground">
       <div className="grain-overlay" aria-hidden />
       <Navbar />
@@ -30,5 +32,6 @@ export default function App() {
       </main>
       <Footer />
     </div>
+    </MotionConfig>
   );
 }

@@ -1,10 +1,7 @@
-import {
-  motion,
-  useMotionValueEvent,
-  useScroll,
-  useSpring,
-} from "framer-motion";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import * as React from "react";
+
+import { useIsMobile } from "@/lib/motion";
 
 /**
  * A winding line that "draws itself" as you scroll — the thread of the story.
@@ -34,9 +31,11 @@ export function JourneyLine({
 }: {
   containerRef: React.RefObject<HTMLDivElement | null>;
 }) {
+  const isMobile = useIsMobile();
   const svgRef = React.useRef<SVGSVGElement | null>(null);
   const pathRef = React.useRef<SVGPathElement | null>(null);
   const heartRef = React.useRef<SVGGElement | null>(null);
+  const pathLengthRef = React.useRef(0);
   const lastPoint = React.useRef({ x: 500, y: 10 });
 
   // `preserveAspectRatio="none"` stretches the viewBox to the container, which
@@ -44,6 +43,11 @@ export function JourneyLine({
   // round at a fixed pixel size regardless of screen aspect ratio.
   const [circleScale, setCircleScale] = React.useState({ sx: 1, sy: 1 });
   const circleScaleRef = React.useRef(circleScale);
+
+  React.useLayoutEffect(() => {
+    const path = pathRef.current;
+    if (path) pathLengthRef.current = path.getTotalLength();
+  }, []);
 
   React.useEffect(() => {
     const svg = svgRef.current;
@@ -56,7 +60,7 @@ export function JourneyLine({
       setCircleScale(next);
       heartRef.current?.setAttribute(
         "transform",
-        `translate(${lastPoint.current.x}, ${lastPoint.current.y}) scale(${next.sx}, ${next.sy})`
+        `translate(${lastPoint.current.x}, ${lastPoint.current.y}) scale(${next.sx}, ${next.sy})`,
       );
     });
     observer.observe(svg);
@@ -68,23 +72,19 @@ export function JourneyLine({
     offset: ["start 0.75", "end 0.9"],
   });
 
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 55,
-    damping: 18,
-    restDelta: 0.0001,
-  });
-
-  useMotionValueEvent(progress, "change", (v) => {
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
     const path = pathRef.current;
     const heart = heartRef.current;
     if (!path || !heart) return;
-    const length = path.getTotalLength();
+
+    const length = pathLengthRef.current || path.getTotalLength();
+    if (!pathLengthRef.current) pathLengthRef.current = length;
     const point = path.getPointAtLength(Math.max(0, Math.min(1, v)) * length);
     lastPoint.current = { x: point.x, y: point.y };
     const { sx, sy } = circleScaleRef.current;
     heart.setAttribute(
       "transform",
-      `translate(${point.x}, ${point.y}) scale(${sx}, ${sy})`
+      `translate(${point.x}, ${point.y}) scale(${sx}, ${sy})`,
     );
     heart.setAttribute("opacity", v > 0.005 && v < 0.995 ? "1" : "0");
   });
@@ -101,12 +101,22 @@ export function JourneyLine({
       <defs>
         <linearGradient id="journey-stroke" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="hsl(var(--blush))" stopOpacity="0.55" />
-          <stop offset="45%" stopColor="hsl(var(--foreground))" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="hsl(var(--blush))" stopOpacity="0.6" />
+          <stop
+            offset="45%"
+            stopColor="hsl(var(--foreground))"
+            stopOpacity="0.5"
+          />
+          <stop
+            offset="100%"
+            stopColor="hsl(var(--blush))"
+            stopOpacity="0.6"
+          />
         </linearGradient>
-        <filter id="journey-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="6" />
-        </filter>
+        {!isMobile ? (
+          <filter id="journey-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
+        ) : null}
       </defs>
 
       {/* Faint ghost of the full route */}
@@ -118,26 +128,28 @@ export function JourneyLine({
         vectorEffect="non-scaling-stroke"
       />
 
-      {/* Soft glow underneath the drawn line */}
-      <motion.path
-        d={PATH_D}
-        stroke="hsl(var(--blush) / 0.35)"
-        strokeWidth="5"
-        strokeLinecap="round"
-        filter="url(#journey-glow)"
-        vectorEffect="non-scaling-stroke"
-        style={{ pathLength: progress }}
-      />
+      {/* Soft glow underneath the drawn line — desktop only (SVG blur is costly) */}
+      {!isMobile ? (
+        <motion.path
+          d={PATH_D}
+          stroke="hsl(var(--blush) / 0.35)"
+          strokeWidth="5"
+          strokeLinecap="round"
+          filter="url(#journey-glow)"
+          vectorEffect="non-scaling-stroke"
+          style={{ pathLength: scrollYProgress }}
+        />
+      ) : null}
 
       {/* The line itself, drawn by scroll */}
       <motion.path
         ref={pathRef}
         d={PATH_D}
         stroke="url(#journey-stroke)"
-        strokeWidth="1.5"
+        strokeWidth={isMobile ? 2 : 1.5}
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
-        style={{ pathLength: progress }}
+        style={{ pathLength: scrollYProgress }}
       />
 
       {/* Sparkles resting on the bends */}
@@ -146,22 +158,37 @@ export function JourneyLine({
           key={`${s.x}-${s.y}`}
           transform={`translate(${s.x}, ${s.y}) scale(${circleScale.sx}, ${circleScale.sy})`}
         >
-          <motion.circle
-            r="3"
-            fill="hsl(var(--blush) / 0.9)"
-            initial={{ opacity: 0, scale: 0 }}
-            whileInView={{ opacity: [0, 1, 0.5, 1], scale: 1 }}
-            viewport={{ once: true, margin: "-20%" }}
-            transition={{ duration: 1.4, delay: 0.2 + i * 0.1 }}
-          />
+          {isMobile ? (
+            <circle r="3" fill="hsl(var(--blush) / 0.7)" />
+          ) : (
+            <motion.circle
+              r="3"
+              fill="hsl(var(--blush) / 0.9)"
+              initial={{ opacity: 0, scale: 0 }}
+              whileInView={{ opacity: [0, 1, 0.5, 1], scale: 1 }}
+              viewport={{ once: true, margin: "-20%" }}
+              transition={{ duration: 1.4, delay: 0.2 + i * 0.1 }}
+            />
+          )}
         </g>
       ))}
 
       {/* Glowing heart travelling along the line */}
-      <g ref={heartRef} opacity="0">
-        <circle r="10" fill="hsl(var(--blush) / 0.25)" filter="url(#journey-glow)" />
+      <g ref={heartRef} opacity="0" style={{ willChange: "transform" }}>
+        {!isMobile ? (
+          <circle
+            r="10"
+            fill="hsl(var(--blush) / 0.25)"
+            filter="url(#journey-glow)"
+          />
+        ) : null}
         <circle r="3.5" fill="hsl(var(--blush))" />
-        <circle r="6" fill="none" stroke="hsl(var(--blush) / 0.5)" strokeWidth="0.75" />
+        <circle
+          r="6"
+          fill="none"
+          stroke="hsl(var(--blush) / 0.5)"
+          strokeWidth="0.75"
+        />
       </g>
     </svg>
   );
