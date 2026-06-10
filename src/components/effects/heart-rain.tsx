@@ -57,6 +57,7 @@ export function GlobalHeartRain() {
   React.useEffect(() => {
     const onClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
+      if (target?.closest("[data-no-heart-rain]")) return;
       if (target?.closest("button, a")) burst();
     };
     document.addEventListener("click", onClick);

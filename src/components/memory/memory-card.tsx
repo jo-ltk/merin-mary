@@ -6,12 +6,68 @@ import { usePrefersReducedMotion } from "@/lib/motion";
 
 /* Pre-scattered offsets so the burst feels hand-placed, not random each render */
 const BURST_HEARTS = [
-  { x: -28, y: -56, scale: 0.75, rotate: -26, delay: 0 },
-  { x: 2, y: -72, scale: 1, rotate: 8, delay: 0.05 },
-  { x: 30, y: -52, scale: 0.6, rotate: 30, delay: 0.1 },
-  { x: -14, y: -42, scale: 0.5, rotate: -12, delay: 0.16 },
-  { x: 18, y: -38, scale: 0.45, rotate: 18, delay: 0.22 },
+  { x: -28, y: -56, scale: 0.75, rotate: -26, delay: 0, tone: "gold" },
+  { x: 2, y: -72, scale: 1, rotate: 8, delay: 0.05, tone: "white" },
+  { x: 30, y: -52, scale: 0.6, rotate: 30, delay: 0.1, tone: "gold" },
+  { x: -14, y: -42, scale: 0.5, rotate: -12, delay: 0.16, tone: "white" },
+  { x: 18, y: -38, scale: 0.45, rotate: 18, delay: 0.22, tone: "gold" },
 ] as const;
+
+const GOLDEN_HEART =
+  "fill-amber-100/90 text-amber-200 drop-shadow-[0_0_10px_rgba(255,236,179,0.55)]";
+const WHITE_HEART =
+  "fill-white/55 text-white/80 drop-shadow-[0_0_8px_rgba(255,255,255,0.45)]";
+
+/** Soft golden-white hearts drifting behind the fullscreen photo. */
+function GoldenLoveRain() {
+  const drops = React.useMemo(
+    () =>
+      Array.from({ length: 22 }, (_, i) => ({
+        x: Math.random() * 100,
+        size: 9 + Math.random() * 14,
+        duration: 5 + Math.random() * 4.5,
+        delay: Math.random() * 3.5,
+        drift: (Math.random() - 0.5) * 80,
+        rotate: (Math.random() - 0.5) * 50,
+        tone: i % 2 === 0 ? "gold" : "white",
+        twinkle: 0.35 + Math.random() * 0.45,
+      })),
+    [],
+  );
+
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      {drops.map((d, i) => (
+        <motion.span
+          key={i}
+          className="absolute top-0"
+          style={{ left: `${d.x}%` }}
+          initial={{ y: "-10vh", x: 0, rotate: 0, opacity: 0 }}
+          animate={{
+            y: "110vh",
+            x: d.drift,
+            rotate: d.rotate,
+            opacity: [0, d.twinkle, d.twinkle, 0],
+          }}
+          transition={{
+            duration: d.duration,
+            delay: d.delay,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        >
+          <Heart
+            className={d.tone === "gold" ? GOLDEN_HEART : WHITE_HEART}
+            style={{ width: d.size, height: d.size }}
+          />
+        </motion.span>
+      ))}
+    </div>
+  );
+}
 
 export function MemoryCard({
   src,
@@ -37,6 +93,7 @@ export function MemoryCard({
   return (
     <button
       type="button"
+      data-no-heart-rain
       onClick={handleTap}
       aria-pressed={flipped}
       aria-label={flipped ? "Close the photo" : "Open the photo full screen"}
@@ -77,50 +134,6 @@ export function MemoryCard({
   );
 }
 
-const RAIN_EMOJIS = ["💖", "💗", "💕", "❤️", "🤍", "✨"] as const;
-
-/** Soft, endless love rain that falls behind the fullscreen photo. */
-function LoveRain() {
-  const drops = React.useMemo(
-    () =>
-      Array.from({ length: 24 }, (_, i) => ({
-        emoji: RAIN_EMOJIS[i % RAIN_EMOJIS.length],
-        x: Math.random() * 100,
-        size: 12 + Math.random() * 18,
-        duration: 4.5 + Math.random() * 4,
-        delay: Math.random() * 4.5,
-        drift: (Math.random() - 0.5) * 90,
-        rotate: (Math.random() - 0.5) * 60,
-      })),
-    [],
-  );
-
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 overflow-hidden"
-    >
-      {drops.map((d, i) => (
-        <motion.span
-          key={i}
-          className="absolute top-0 select-none opacity-55"
-          style={{ left: `${d.x}%`, fontSize: d.size }}
-          initial={{ y: "-10vh", x: 0, rotate: 0 }}
-          animate={{ y: "110vh", x: d.drift, rotate: d.rotate }}
-          transition={{
-            duration: d.duration,
-            delay: d.delay,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        >
-          {d.emoji}
-        </motion.span>
-      ))}
-    </div>
-  );
-}
-
 /**
  * Fullscreen, centered photo reveal. The image flips into view like a card
  * being turned over in your hand.
@@ -149,6 +162,7 @@ export function MemoryLightbox({
     <AnimatePresence>
       {src && (
         <motion.div
+          data-no-heart-rain
           className="fixed inset-0 z-[90] flex items-center justify-center px-4 py-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -160,9 +174,9 @@ export function MemoryLightbox({
           <div className="absolute inset-0 bg-background/50 backdrop-blur-2xl" />
           <div className="blush-glow absolute left-1/2 top-1/2 h-[130vmin] w-[130vmin] -translate-x-1/2 -translate-y-1/2" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,hsl(var(--background)/0.7)_100%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,236,179,0.08)_0%,transparent_55%)]" />
 
-          {/* Love rain falling behind the photo */}
-          {!reduced && <LoveRain />}
+          {!reduced && <GoldenLoveRain />}
 
           <button
             type="button"
@@ -242,7 +256,9 @@ export function MemoryLightbox({
                       ease: "easeOut",
                     }}
                   >
-                    <Heart className="h-4 w-4 fill-blush text-blush" />
+                    <Heart
+                      className={`h-4 w-4 ${h.tone === "gold" ? GOLDEN_HEART : WHITE_HEART}`}
+                    />
                   </motion.span>
                 ))}
               </span>
