@@ -26,7 +26,7 @@ function RevealWord({
 }) {
   const start = index / total;
   const end = (index + 1) / total;
-  const opacity = useTransform(scrollYProgress, [start, end], [0.15, 1]);
+  const opacity = useTransform(scrollYProgress, [start, end], [0.12, 1]);
   const clean = word.replace(/[—,.;:!?"]/g, "").toLowerCase();
   const isHighlight = highlightWords
     .map((w) => w.toLowerCase())
@@ -36,7 +36,9 @@ function RevealWord({
     <motion.span
       style={{ opacity }}
       className={
-        isHighlight ? "text-foreground" : "text-[hsl(var(--hero-subtitle))]"
+        isHighlight
+          ? "italic text-blush"
+          : "text-[hsl(var(--hero-subtitle))]"
       }
     >
       {word}{" "}
@@ -78,31 +80,68 @@ function ScrollRevealWords({
 }
 
 export function MissionSection() {
+  const frameRef = React.useRef<HTMLDivElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: frameRef,
+    offset: ["start end", "end start"],
+  });
+  const videoY = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
   return (
-    <section className="mx-auto max-w-6xl px-8 pt-0 pb-32 md:px-28 md:pb-44">
-      <motion.div {...fadeUp(0)} className="grid place-items-center">
-        <video
-          className="h-[520px] w-[520px] rounded-3xl object-cover md:h-[800px] md:w-[800px]"
-          src={MISSION_VIDEO}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-        />
+    <section
+      id="adventures"
+      className="mx-auto max-w-6xl scroll-mt-24 px-6 pt-32 pb-32 md:px-12 md:pt-44 md:pb-44"
+    >
+      <div className="text-center">
+        <motion.span
+          {...fadeUp(0)}
+          className="font-script text-2xl text-blush md:text-3xl"
+        >
+          chapter two
+        </motion.span>
+        <motion.h2
+          {...fadeUp(0.1)}
+          className="mt-3 font-display text-5xl font-medium tracking-tight md:text-7xl"
+        >
+          The{" "}
+          <span className="font-serif italic font-normal text-blush">
+            Adventures
+          </span>
+        </motion.h2>
+      </div>
+
+      <motion.div
+        ref={frameRef}
+        {...fadeUp(0.15)}
+        className="mt-20 grid place-items-center"
+      >
+        <motion.div
+          style={{ y: videoY }}
+          className="photo-frame w-full max-w-[800px] -rotate-1"
+        >
+          <video
+            className="aspect-square w-full object-cover"
+            src={MISSION_VIDEO}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+          />
+        </motion.div>
       </motion.div>
 
-      <div className="mx-auto mt-16 max-w-5xl">
+      <div className="mx-auto mt-24 max-w-4xl md:mt-32">
         <ScrollRevealWords
           text={`Travel Stories unlocked — new places, funny trip moments, noodles and a quick balance check afterwards, scooter trust unlocked, and nammal full comedy ayirunnu. Street Food Explorer mode. Professional Overthinker, still down for chaos. Some memories age well.`}
-          highlightWords={["travelled", "together", "memories"]}
-          className="text-2xl font-medium tracking-[-1px] md:text-4xl lg:text-5xl"
+          highlightWords={["unlocked", "comedy", "memories"]}
+          className="font-display text-3xl font-medium leading-snug tracking-tight md:text-5xl"
         />
 
         <ScrollRevealWords
           text={`Some mistakes stay with you. August 4th is one of mine. No excuses. Just something I wish I had done better. Communication had its glitches — distance grew — but appreciation stays. Things I learned: show up, remember the small dates, and never take the daily calls for granted.`}
           highlightWords={["August", "4th", "appreciation"]}
-          className="mt-10 text-xl font-medium md:text-2xl lg:text-3xl"
+          className="mt-14 font-display text-2xl font-normal leading-snug md:text-3xl"
         />
       </div>
     </section>

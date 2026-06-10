@@ -1,88 +1,236 @@
-import { motion } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
+import * as React from "react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { fadeUp } from "@/lib/motion";
+/**
+ * Swap these with your own photos: drop files into /public/images
+ * and change `src` to "/images/your-photo.jpg".
+ */
+const PHOTOS = [
+  {
+    src: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=640&q=80",
+    className: "left-[3%] top-[14%] w-40 lg:left-[6%] lg:w-52",
+    rotate: -7,
+    depth: 34,
+    delay: 0.65,
+    float: 6.2,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=640&q=80",
+    className: "right-[2%] top-[12%] w-44 lg:right-[5%] lg:w-60",
+    rotate: 6,
+    depth: 26,
+    delay: 0.8,
+    float: 7.4,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=640&q=80",
+    className: "bottom-[16%] left-[8%] w-48 lg:left-[12%] lg:w-64",
+    rotate: 5,
+    depth: 20,
+    delay: 0.95,
+    float: 8.1,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=640&q=80",
+    className: "bottom-[14%] right-[7%] w-44 lg:right-[11%] lg:w-56",
+    rotate: -5,
+    depth: 30,
+    delay: 1.1,
+    float: 6.8,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=640&q=80",
+    className: "left-[26%] top-[6%] hidden w-36 lg:block",
+    rotate: -3,
+    depth: 16,
+    delay: 1.25,
+    float: 9,
+  },
+  {
+    src: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=640&q=80",
+    className: "right-[24%] top-[64%] hidden w-36 lg:block",
+    rotate: 8,
+    depth: 22,
+    delay: 1.4,
+    float: 7,
+  },
+] as const;
 
-const HERO_VIDEO =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260325_120549_0cd82c36-56b3-4dd9-b190-069cfc3a623f.mp4";
+type Photo = (typeof PHOTOS)[number];
 
-const avatars = [
-  "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?auto=format&fit=crop&w=96&h=96&q=80",
-  "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=96&h=96&q=80",
-  "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=96&h=96&q=80",
-];
+function FloatingPhoto({
+  photo,
+  mouseX,
+  mouseY,
+  scrollProgress,
+}: {
+  photo: Photo;
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
+  scrollProgress: MotionValue<number>;
+}) {
+  const px = useTransform(mouseX, (v) => v * photo.depth);
+  const py = useTransform(mouseY, (v) => v * photo.depth);
+  const drift = useTransform(scrollProgress, [0, 1], [0, photo.depth * 6]);
+  const fade = useTransform(scrollProgress, [0, 0.7], [1, 0]);
 
-export function HeroSection() {
   return (
-    <section className="relative min-h-dvh overflow-hidden">
-      <video
-        className="absolute inset-0 h-full w-full object-cover"
-        src={HERO_VIDEO}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-      />
-      <div className="absolute inset-0 bg-background/55" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-background to-transparent" />
-
-      <div className="relative z-10 mx-auto flex min-h-dvh max-w-6xl flex-col items-center justify-center px-8 pt-28 text-center md:px-28 md:pt-32">
+    <motion.div
+      className={`absolute ${photo.className}`}
+      style={{ y: drift, opacity: fade }}
+    >
+      <motion.div style={{ x: px, y: py }}>
         <motion.div
-          {...fadeUp(0)}
-          className="mb-8 flex items-center gap-3"
+          initial={{ opacity: 0, scale: 0.7, rotate: photo.rotate * 2.4, y: 36 }}
+          animate={{ opacity: 1, scale: 1, rotate: photo.rotate, y: 0 }}
+          transition={{
+            duration: 1.3,
+            delay: photo.delay,
+            ease: [0.16, 1, 0.3, 1],
+          }}
         >
-          <div className="flex -space-x-2">
-            {avatars.map((src) => (
-              <img
-                key={src}
-                src={src}
-                alt="Archived travel memory"
-                className="h-8 w-8 rounded-full border-2 border-background object-cover"
-                loading="lazy"
-              />
-            ))}
-          </div>
-          <span className="text-sm text-muted-foreground">
-            Travel Mode · Memory Saved · Archived
-          </span>
-        </motion.div>
-
-        <motion.h1
-          {...fadeUp(0.1)}
-          className="text-5xl font-medium tracking-[-2px] md:text-7xl lg:text-8xl"
-        >
-          PROJECT:{" "}
-          <span className="font-serif italic font-normal">MERIN</span> MARY
-        </motion.h1>
-
-        <motion.p
-          {...fadeUp(0.2)}
-          className="mt-6 max-w-3xl text-lg leading-relaxed text-[hsl(var(--hero-subtitle))]"
-        >
-          An interactive archive of adventures, travel stories, random chaos,
-          missed moments, and one unforgettable human.
-        </motion.p>
-
-        <motion.form
-          {...fadeUp(0.3)}
-          onSubmit={(e) => e.preventDefault()}
-          className="liquid-glass mt-10 flex w-full max-w-lg items-center gap-2 rounded-full p-2 ring-1 ring-white/5"
-        >
-          <Input
-            type="email"
-            placeholder="reply loading..."
-            className="h-12 flex-1 rounded-full"
-          />
-          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-            <Button className="h-12 rounded-full px-8 py-3 font-semibold tracking-[1px]">
-              OPEN ARCHIVE
-            </Button>
+          <motion.div
+            className="photo-frame aspect-[4/5]"
+            animate={{ y: [0, -9, 0] }}
+            transition={{
+              duration: photo.float,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: photo.delay,
+            }}
+            whileHover={{ scale: 1.04, transition: { duration: 0.4 } }}
+          >
+            <img src={photo.src} alt="" loading="eager" draggable={false} />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/35 via-transparent to-transparent" />
           </motion.div>
-        </motion.form>
-      </div>
-    </section>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
 
+const titleReveal = (delay: number) => ({
+  initial: { opacity: 0, y: 40, filter: "blur(10px)" },
+  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+  transition: { duration: 1.2, delay, ease: [0.16, 1, 0.3, 1] as const },
+});
+
+export function HeroSection() {
+  const sectionRef = React.useRef<HTMLElement | null>(null);
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const mouseX = useSpring(rawX, { stiffness: 50, damping: 16 });
+  const mouseY = useSpring(rawY, { stiffness: 50, damping: 16 });
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const titleY = useTransform(scrollYProgress, [0, 1], [0, 110]);
+  const titleFade = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    rawX.set(e.clientX / window.innerWidth - 0.5);
+    rawY.set(e.clientY / window.innerHeight - 0.5);
+  };
+
+  return (
+    <section
+      ref={sectionRef}
+      onMouseMove={onMouseMove}
+      className="relative min-h-dvh overflow-hidden"
+    >
+      {/* Atmosphere */}
+      <div className="blush-glow absolute left-1/2 top-1/2 h-[120vmin] w-[120vmin] -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--accent)/0.07),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-background to-transparent" />
+
+      {/* Floating photo collage — desktop & tablet */}
+      <div className="absolute inset-0 hidden md:block">
+        {PHOTOS.map((photo) => (
+          <FloatingPhoto
+            key={photo.src}
+            photo={photo}
+            mouseX={mouseX}
+            mouseY={mouseY}
+            scrollProgress={scrollYProgress}
+          />
+        ))}
+      </div>
+
+      {/* Headline */}
+      <motion.div
+        style={{ y: titleY, opacity: titleFade }}
+        className="relative z-10 mx-auto flex min-h-dvh max-w-5xl flex-col items-center justify-center px-6 pt-24 text-center md:pt-28"
+      >
+        <motion.span
+          {...titleReveal(0.15)}
+          className="font-script text-3xl text-blush md:text-4xl"
+        >
+          a love letter for
+        </motion.span>
+
+        <motion.h1
+          {...titleReveal(0.35)}
+          className="mt-4 font-display text-7xl font-medium leading-[0.95] tracking-tight md:text-8xl lg:text-[9rem]"
+        >
+          Merin{" "}
+          <span className="font-light italic text-blush">Mary</span>
+        </motion.h1>
+
+        <motion.div
+          {...titleReveal(0.6)}
+          className="mt-8 flex items-center gap-4 text-[0.65rem] font-medium uppercase tracking-[0.35em] text-muted-foreground md:text-xs"
+        >
+          <span className="h-px w-8 bg-border md:w-12" />
+          every mile · every laugh · every memory
+          <span className="h-px w-8 bg-border md:w-12" />
+        </motion.div>
+
+        {/* Mobile collage — an overlapping fan of photos */}
+        <motion.div
+          {...titleReveal(0.8)}
+          className="mt-12 flex items-center justify-center md:hidden"
+        >
+          {PHOTOS.slice(0, 4).map((photo, i) => (
+            <div
+              key={photo.src}
+              className="photo-frame -ml-8 aspect-[4/5] w-28 first:ml-0"
+              style={{
+                transform: `rotate(${(i - 1.5) * 6}deg) translateY(${Math.abs(i - 1.5) * 8}px)`,
+              }}
+            >
+              <img src={photo.src} alt="" loading="eager" draggable={false} />
+            </div>
+          ))}
+        </motion.div>
+      </motion.div>
+
+      {/* Scroll cue */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 1 }}
+        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
+      >
+        <span className="text-[0.6rem] uppercase tracking-[0.4em] text-muted-foreground">
+          scroll slowly
+        </span>
+        <div className="relative h-12 w-px overflow-hidden bg-border/40">
+          <motion.div
+            className="absolute h-1/2 w-full bg-blush"
+            animate={{ y: ["-100%", "200%"] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+      </motion.div>
+    </section>
+  );
+}

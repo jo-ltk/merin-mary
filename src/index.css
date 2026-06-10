@@ -4,6 +4,14 @@
 @import "@fontsource/inter/700.css";
 @import "@fontsource/instrument-serif/400.css";
 @import "@fontsource/instrument-serif/400-italic.css";
+@import "@fontsource/cormorant-garamond/300.css";
+@import "@fontsource/cormorant-garamond/400.css";
+@import "@fontsource/cormorant-garamond/500.css";
+@import "@fontsource/cormorant-garamond/600.css";
+@import "@fontsource/cormorant-garamond/300-italic.css";
+@import "@fontsource/cormorant-garamond/400-italic.css";
+@import "@fontsource/cormorant-garamond/500-italic.css";
+@import "@fontsource/pinyon-script/400.css";
 
 @import "tailwindcss";
 @config "../tailwind.config.ts";
@@ -27,6 +35,9 @@
   --input: 0 0% 18%;
   --ring: 0 0% 40%;
   --hero-subtitle: 210 17% 95%;
+  /* Romantic warm blush — used sparingly for emotional accents */
+  --blush: 14 42% 78%;
+  --blush-deep: 350 30% 60%;
 }
 
 @theme inline {
@@ -45,14 +56,22 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --color-blush: hsl(var(--blush));
+  --color-blush-deep: hsl(var(--blush-deep));
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   --font-serif: "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
+  --font-display: "Cormorant Garamond", "Instrument Serif", ui-serif, Georgia, serif;
+  --font-script: "Pinyon Script", "Brush Script MT", cursive;
 }
 
 @layer base {
   * {
     border-color: hsl(var(--border));
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   html,
@@ -66,6 +85,11 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: hsl(var(--blush) / 0.25);
+    color: hsl(var(--foreground));
   }
 }
 
@@ -100,4 +124,41 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/* Cinematic film grain laid over the whole page */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Polaroid-style framed photo used in the hero collage */
+.photo-frame {
+  border-radius: 0.875rem;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 24px 60px -16px rgba(0, 0, 0, 0.9),
+    0 4px 18px rgba(0, 0, 0, 0.6);
+}
+
+.photo-frame img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* Soft warm glow behind focal elements */
+.blush-glow {
+  background: radial-gradient(
+    ellipse at center,
+    hsl(var(--blush) / 0.14) 0%,
+    hsl(var(--blush) / 0.05) 40%,
+    transparent 70%
+  );
 }

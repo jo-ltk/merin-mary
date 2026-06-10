@@ -9,8 +9,12 @@ export default {
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui"],
         serif: ["Instrument Serif", "ui-serif", "Georgia"],
+        display: ["Cormorant Garamond", "Instrument Serif", "ui-serif", "Georgia"],
+        script: ["Pinyon Script", "Brush Script MT", "cursive"],
       },
       colors: {
+        blush: "hsl(var(--blush))",
+        "blush-deep": "hsl(var(--blush-deep))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: "hsl(var(--card))",

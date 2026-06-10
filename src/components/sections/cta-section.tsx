@@ -2,10 +2,8 @@ import Hls from "hls.js";
 import { motion } from "framer-motion";
 import * as React from "react";
 
-import { MindloopLogo } from "@/components/sections/logo";
 import { Button } from "@/components/ui/button";
 import { fadeUp } from "@/lib/motion";
-import { cn } from "@/lib/utils";
 
 const CTA_HLS =
   "https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8";
@@ -34,7 +32,10 @@ export function CTASection() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden border-t border-border/30 py-32 md:py-44">
+    <section
+      id="thanks"
+      className="relative scroll-mt-24 overflow-hidden border-t border-border/30 py-36 md:py-52"
+    >
       <video
         ref={videoRef}
         className="absolute inset-0 h-full w-full object-cover"
@@ -43,53 +44,54 @@ export function CTASection() {
         muted
         playsInline
       />
-      <div className="absolute inset-0 z-[1] bg-background/45" />
+      <div className="absolute inset-0 z-[1] bg-background/60" />
+      <div className="absolute inset-x-0 top-0 z-[1] h-40 bg-gradient-to-b from-background to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 z-[1] h-40 bg-gradient-to-t from-background to-transparent" />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-8 text-center md:px-28">
-        <motion.div {...fadeUp(0)} className="mx-auto grid place-items-center">
-          <MindloopLogo
-            className="h-10 w-10"
-            outerClassName="h-10 w-10"
-            innerClassName="h-5 w-5"
-          />
-        </motion.div>
+      <div className="relative z-10 mx-auto max-w-4xl px-6 text-center md:px-12">
+        <motion.span
+          {...fadeUp(0)}
+          className="font-script text-3xl text-blush md:text-4xl"
+        >
+          the last page
+        </motion.span>
 
         <motion.h2
           {...fadeUp(0.1)}
-          className="mt-8 text-4xl font-medium tracking-[-1px] md:text-6xl"
+          className="mt-4 font-display text-6xl font-medium tracking-tight md:text-8xl"
         >
           Thanks,{" "}
-          <span className="font-serif italic font-normal">Merin.</span>
+          <span className="font-serif italic font-normal text-blush">
+            Merin.
+          </span>
         </motion.h2>
 
         <motion.p
           {...fadeUp(0.2)}
-          className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
+          className="mx-auto mt-8 max-w-2xl font-display text-2xl leading-relaxed text-[hsl(var(--hero-subtitle))] md:text-3xl"
         >
           Maybe some stories don&apos;t need a perfect ending. Maybe they only
           need gratitude. Thanks for the adventures. Thanks for the laughs.
-          Thanks for being part of my life story. Still one of my favorite
-          humans.
+          Thanks for being part of my life story.
         </motion.p>
 
-        <motion.div
+        <motion.p
           {...fadeUp(0.3)}
-          className={cn(
-            "mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row",
-          )}
+          className="mt-8 font-script text-3xl text-blush md:text-4xl"
         >
-          <Button className="rounded-lg px-8 py-3.5 text-sm font-semibold">
-            Start Journey
-          </Button>
+          still one of my favorite humans
+        </motion.p>
+
+        <motion.div {...fadeUp(0.4)} className="mt-12">
           <Button
             variant="liquid"
-            className="rounded-lg px-8 py-3.5 text-sm font-semibold ring-1 ring-white/5"
+            className="rounded-full px-10 py-3.5 text-sm font-medium tracking-[0.15em] ring-1 ring-white/10"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            Continue Exploring
+            READ IT AGAIN
           </Button>
         </motion.div>
       </div>
     </section>
   );
 }
-
